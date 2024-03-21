@@ -10,8 +10,7 @@ int userOptions[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9}; // possible user options
 char xo[2] = {'X', 'O'};
 vector<int> userPicks = {0};
 char userInput;
-bool state = true;
-bool userTurn = true;
+bool active = true;
 
 // declare board
 char board[5][5] = {
@@ -42,7 +41,18 @@ bool tie();
 
 int main() {
 
-    player1();
+    while (!winner() || !tie()) {
+        player1();
+        if (winner() || tie()) {
+            cout << "Winner Player 1!" << endl;
+            break;
+        }
+        player2();
+        if (winner() || tie()) {
+            cout << "Winner Player 2!" << endl;
+            break;
+        }
+    }
 
     return 0;
 }
@@ -58,18 +68,8 @@ bool validOption(int userChoice) {
     return false;
 }
 
-// check if option is still open
-bool openOption(int userChoice) {
-    for (int number : userPicks) {
-        if (number != userChoice) {
-            return true;
-            break;
-        }
-    }
-    return false;
-}
 
-// check user input for validity with input
+
 bool validInput(int userInput) {
     for (char c : xo) {
         if (c == toupper(userInput)) {
@@ -85,7 +85,7 @@ bool validInput(int userInput) {
 
 // game options for players
 void player1() {
-
+    bool userTurn = true;
     while(userTurn) {
 
         cout << "(1) Enter desired block #: ";
@@ -106,13 +106,12 @@ void player1() {
 
 
         cout << "(1) Location [" << userChoice << "] to [" << userInput << "]" << endl;
-        cout << "Player count: " << userPicks.size() << endl;
         userTurn = false;
     }
 }
 
-// TODO: adsa
 void player2() {
+    bool userTurn = true;
     while(userTurn) {
 
         cout << "(2) Enter desired block #: ";
@@ -132,15 +131,31 @@ void player2() {
         cout << endl;
 
         cout << "(2) Location [" << userChoice << "] to [" << userInput << "]" << endl;
-        cout << "Player count: " << userPicks.size() << endl;
         userTurn = false;
     }
+}
+// check user input for validity with input
+
+// check if option is still open
+bool openOption(int userChoice) {
+    for (int number : userPicks) {
+        if (number != userChoice) {
+            return true;
+            break;
+        }
+    }
+    return false;
 }
 
 // edit board
 void editBoard(int userChoice) {
     cout << "Enter the value you want to input (X/O): ";
     cin >> userInput;
+
+    while(!validInput(userInput)) {
+        cout << "Invalid input (X/O): ";
+        cin >> userInput;
+    }
 
     if (validInput(userInput)) {
         switch (userChoice) {
@@ -186,10 +201,13 @@ void printBoard() {
         }
         cout << std::endl; // Newline after each row
     }
+
+    cout << "Player count: " << userPicks.size()-1 << endl;
+    cout << endl;
 }
 
 // declare winner or tie
-bool winner(){
+bool winner() {
     if ((board[0][0] == board[0][2]) && (board[0][0] == board[0][4])) {
         return true;
     } else if ((board[2][0] == board[2][2]) && (board[2][0] == board[2][4])) {
@@ -198,7 +216,7 @@ bool winner(){
         return true;
     } else if ((board[0][0] == board[2][2]) && (board[0][0] == board[4][4])) {
         return true;
-    } else if ((board[0][4] == board[0][2]) && (board[0][4] == board[4][0])) {
+    } else if ((board[0][4] == board[2][2]) && (board[0][4] == board[4][0])) {
         return true;
     }
 
@@ -206,9 +224,8 @@ bool winner(){
 }
 
 bool tie() {
-    if (userPicks.size() == 9) {
+    if (userPicks.size() == 10) {
         return true;
     } 
-
     return false;
 }
