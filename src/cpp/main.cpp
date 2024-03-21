@@ -1,16 +1,15 @@
 #include <iostream>
 #include <vector>
 #include <array>
-#include <algorithm>
 
 using namespace std;
+
 // declare standards
 int userChoice; // user input choice
 int userOptions[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9}; // possible user options
-char xo[2] = {'X', 'O'};
-vector<int> userPicks = {0};
+char xo[2] = {'X', 'O'}; // possible user inputs
+vector<int> userPicks = {0}; // list of taken choices
 char userInput;
-bool active = true;
 
 // declare board
 char board[5][5] = {
@@ -42,11 +41,13 @@ bool tie();
 int main() {
 
     while (!winner() || !tie()) {
+	
         player1();
         if (winner() || tie()) {
             cout << "Winner Player 1!" << endl;
             break;
         }
+
         player2();
         if (winner() || tie()) {
             cout << "Winner Player 2!" << endl;
